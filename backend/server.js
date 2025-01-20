@@ -16,11 +16,12 @@ const server = http.createServer(app);
 
 // Configure CORS to allow requests from your frontend URL
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000', // Use environment variable or fallback to localhost
+  origin: '*', // Allow all origins
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 }));
+  
 
 app.use(bodyParser.json());
 
