@@ -17,6 +17,8 @@ const initializeSocket = (server) => {
       userSockets.set(profileId, socket.id);
 
       const undeliveredMessages = await Message.find({ receiverId: profileId }).sort({ timestamp: 1 });
+
+      // Convert UTC timestamp to local time before sending the message
       undeliveredMessages.forEach((msg) => {
         const messageWithTime = {
           ...msg.toObject(),
@@ -30,6 +32,7 @@ const initializeSocket = (server) => {
 
     socket.on('sendMessage', async ({ senderId, receiverId, content }) => {
       try {
+        // Save the message with the current UTC timestamp
         const savedMessage = await Message.create({
           senderId,
           receiverId,
@@ -39,6 +42,7 @@ const initializeSocket = (server) => {
 
         const fetchedMessage = await Message.findById(savedMessage._id);
 
+        // Convert the UTC timestamp to the receiver's local time zone
         const messageWithTime = {
           ...fetchedMessage.toObject(),
           timestamp: new Date(fetchedMessage.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
