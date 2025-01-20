@@ -18,11 +18,11 @@ const initializeSocket = (server) => {
 
       const undeliveredMessages = await Message.find({ receiverId: profileId }).sort({ timestamp: 1 });
 
-      // Convert UTC timestamp to local time before sending the message
+      // Ensure the timestamp is valid and convert to the local time
       undeliveredMessages.forEach((msg) => {
         const messageWithTime = {
           ...msg.toObject(),
-          timestamp: new Date(msg.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+          timestamp: formatToLocalTime(msg.timestamp), // Convert to local time
         };
         socket.emit('receiveMessage', messageWithTime);
       });
@@ -37,7 +37,7 @@ const initializeSocket = (server) => {
           senderId,
           receiverId,
           content,
-          timestamp: new Date(),
+          timestamp: new Date(), // Store as UTC
         });
 
         const fetchedMessage = await Message.findById(savedMessage._id);
@@ -45,7 +45,7 @@ const initializeSocket = (server) => {
         // Convert the UTC timestamp to the receiver's local time zone
         const messageWithTime = {
           ...fetchedMessage.toObject(),
-          timestamp: new Date(fetchedMessage.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+          timestamp: formatToLocalTime(fetchedMessage.timestamp), // Convert to local time
         };
 
         const receiverSocketId = userSockets.get(receiverId);
@@ -68,6 +68,19 @@ const initializeSocket = (server) => {
   });
 
   return io;
+};
+
+// Function to format timestamp to local time
+const formatToLocalTime = (timestamp) => {
+  // Convert the timestamp to a Date object if it's not already
+  const date = new Date(timestamp);
+  if (isNaN(date.getTime())) {
+    console.error('Invalid date:', timestamp);
+    return '';
+  }
+  
+  // Return the timestamp in a specific time format (HH:mm)
+  return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 };
 
 module.exports = { initializeSocket, userSockets, io };
