@@ -3,7 +3,7 @@ import io from 'socket.io-client';
 import '../styles/chat/rightbar.css';
 import logo from '../../Logo.png';
 
-const socket = io('http://localhost:5000');
+const socket = io(process.env.REACT_APP_API_URL);
 
 function RightBar({ currentContact, setCurrentContact }) {
   const [message, setMessage] = useState('');

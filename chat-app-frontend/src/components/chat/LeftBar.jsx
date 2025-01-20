@@ -7,7 +7,7 @@ import '../styles/chat/leftbar.css';
 import ContactIcon from '../../Contact.png';
 import LogoutIcon from '../../Logout.png';
 
-const socket = io('http://localhost:5000');
+const socket = io(process.env.REACT_APP_API_URL);
 
 function LeftBar({
   searchQuery,
@@ -33,7 +33,7 @@ function LeftBar({
         return;
       }
       const response = await axios.get(
-        `http://localhost:5000/api/auth/fetchContact?profileId=${profileId}`
+        `${process.env.REACT_APP_API_URL}/api/auth/fetchContact?profileId=${profileId}`
       );
       if (response.status === 200) {
         setContactsState(response.data.contacts);
@@ -117,12 +117,12 @@ function LeftBar({
     }
     try {
       const searchResponse = await axios.get(
-        `http://localhost:5000/api/auth/search?query=${newContactNumber}`
+        `${process.env.REACT_APP_API_URL}/api/auth/search?query=${newContactNumber}`
       );
       if (searchResponse.status === 200 && searchResponse.data.user) {
         const { profileId: contactProfileId } = searchResponse.data.user;
         const addContactResponse = await axios.post(
-          'http://localhost:5000/api/auth/addContact',
+          `${process.env.REACT_APP_API_URL}/api/auth/addContact`,
           {
             profileId,
             contactName: newContactName,
@@ -149,7 +149,7 @@ function LeftBar({
     if (!profileId) return;
 
     try {
-      await fetch('http://localhost:5000/api/auth/logout', {
+      await fetch(`${process.env.REACT_APP_API_URL}/api/auth/logout`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ profileId }),

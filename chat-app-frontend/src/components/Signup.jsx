@@ -8,15 +8,16 @@ const Signup = () => {
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
 
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   const handleSignup = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/register', {
-        phoneNumber,
-        password,
-        username,
-      });
+      const response = await axios.post(
+        `${apiUrl}/api/auth/register`,
+        { phoneNumber, password, username }
+      );
 
       alert('Registration successful. Please login.');
       window.location.href = '/login';

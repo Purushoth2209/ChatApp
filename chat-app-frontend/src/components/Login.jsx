@@ -11,21 +11,23 @@ const Login = () => {
   const [socket, setSocket] = useState(null);
   const navigate = useNavigate();
 
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
-    const socketInstance = io('http://localhost:5000');
+    const socketInstance = io(apiUrl);
     setSocket(socketInstance);
 
     return () => {
       if (socketInstance) socketInstance.disconnect();
     };
-  }, []);
+  }, [apiUrl]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/auth/login',
+         `${apiUrl || 'http://localhost:5000'}/api/auth/login`,
         { phoneNumber, password }
       );
 

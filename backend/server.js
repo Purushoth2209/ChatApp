@@ -30,6 +30,7 @@ const mongoURI = process.env.MONGO_URI;
 // Connect to MongoDB and start the server
 mongoose.connect(mongoURI)
   .then(() => {
+        console.log('Successfully connected to MongoDB');
     // Set up routes after successful connection to MongoDB
     app.use('/api/auth', authRoutes);
     app.use('/api/messages', messageRoutes);
