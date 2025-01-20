@@ -6,7 +6,7 @@ const cors = require('cors');
 const http = require('http');
 const authRoutes = require('./routes/authRoutes');
 const messageRoutes = require('./routes/messageRoutes');
-const { initializeSocket } = require('./authentication/socketio');
+const { initializeSocket } = require('./socketio');
 const port = process.env.PORT || 5000;
 
 const app = express();
