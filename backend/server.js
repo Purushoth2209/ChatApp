@@ -7,6 +7,7 @@ const http = require('http');
 const authRoutes = require('./routes/authRoutes');
 const messageRoutes = require('./routes/messageRoutes');
 const { initializeSocket } = require('./authentication/socketio');
+const port = process.env.PORT || 5000;
 
 const app = express();
 const server = http.createServer(app);
@@ -27,7 +28,7 @@ mongoose.connect(mongoURI)
     app.use('/api/auth', authRoutes);
     app.use('/api/messages', messageRoutes);
     initializeSocket(server);
-    server.listen(5000);
+    server.listen(process.env.PORT||5000);
   })
   .catch(err => {
     console.error('Error connecting to MongoDB Atlas:', err);
