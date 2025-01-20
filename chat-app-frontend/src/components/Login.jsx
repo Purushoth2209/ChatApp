@@ -27,7 +27,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-         `${apiUrl || 'http://localhost:5000'}/api/auth/login`,
+         `${apiUrl}/api/auth/login`,
         { phoneNumber, password }
       );
 
