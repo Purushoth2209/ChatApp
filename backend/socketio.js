@@ -1,5 +1,6 @@
 const { Server } = require('socket.io');
 const Message = require('./models/Message');
+const moment = require('moment'); // Import Moment.js
 
 const userSockets = new Map();
 let io;
@@ -22,7 +23,7 @@ const initializeSocket = (server) => {
       undeliveredMessages.forEach((msg) => {
         const messageWithTime = {
           ...msg.toObject(),
-          timestamp: formatToLocalTime(msg.timestamp), // Convert to local time
+          timestamp: formatToLocalTime(msg.timestamp), // Convert to local time using Moment.js
         };
         socket.emit('receiveMessage', messageWithTime);
       });
@@ -42,7 +43,7 @@ const initializeSocket = (server) => {
 
         const fetchedMessage = await Message.findById(savedMessage._id);
 
-        // Convert the UTC timestamp to the receiver's local time zone
+        // Convert the UTC timestamp to the receiver's local time zone using Moment.js
         const messageWithTime = {
           ...fetchedMessage.toObject(),
           timestamp: formatToLocalTime(fetchedMessage.timestamp), // Convert to local time
@@ -70,17 +71,16 @@ const initializeSocket = (server) => {
   return io;
 };
 
-// Function to format timestamp to local time
+// Function to format timestamp to local time using Moment.js
 const formatToLocalTime = (timestamp) => {
-  // Convert the timestamp to a Date object if it's not already
-  const date = new Date(timestamp);
-  if (isNaN(date.getTime())) {
+  // Use Moment.js to handle the conversion from UTC to local time
+  const localTime = moment(timestamp).local().format('HH:mm'); // Converts to local time in 'HH:mm' format
+  if (!localTime) {
     console.error('Invalid date:', timestamp);
     return '';
   }
-  
-  // Return the timestamp in a specific time format (HH:mm)
-  return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+  return localTime;
 };
 
 module.exports = { initializeSocket, userSockets, io };

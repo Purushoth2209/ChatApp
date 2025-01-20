@@ -37,24 +37,20 @@ function RightBar({ currentContact, setCurrentContact }) {
   };
 
   useEffect(() => {
-  socket.on('receiveMessage', (message) => {
-    // Convert UTC timestamp to the local time of the receiver
-    const localTimestamp = new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    socket.on('receiveMessage', (message) => {
+      const updatedMessage = { ...message, timestamp: message.timestamp };
+      const { senderId } = updatedMessage;
 
-    const updatedMessage = { ...message, timestamp: localTimestamp };
-    const { senderId } = updatedMessage;
+      setMessagesByContact((prev) => ({
+        ...prev,
+        [senderId]: [...(prev[senderId] || []), updatedMessage],
+      }));
+    });
 
-    setMessagesByContact((prev) => ({
-      ...prev,
-      [senderId]: [...(prev[senderId] || []), updatedMessage],
-    }));
-  });
-
-  return () => {
-    socket.off('receiveMessage');
-  };
-}, []);
-  
+    return () => {
+      socket.off('receiveMessage');
+    };
+  }, []);
 
   const handleEscapeKey = useCallback(
     (e) => {
